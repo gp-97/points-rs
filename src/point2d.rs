@@ -22,16 +22,16 @@ impl<T> Point2D<T> {
     {
         (self.x - other.x) * (self.x - other.x) + (self.y - other.y) * (self.y - other.y)
     }
-    pub fn slope(&self, other: &Point2D<T>) -> Result<T, String>
+    pub fn slope(&self, other: &Point2D<T>) -> Result<T, &str>
     where
         T: Copy + Sub + Div + Sub<Output = T> + Div<Output = T> + PartialEq,
     {
         let del_y = self.y - other.y;
         let del_x = self.x - other.x;
         if self.y == other.y {
-            Ok(del_y / del_x)
+            Err("Slope = Inf")
         } else {
-            Err("Slope = Inf".to_string())
+            Ok(del_y / del_x)
         }
     }
 }
@@ -52,13 +52,11 @@ mod tests {
     }
     #[test]
     fn slope_test() {
-        let p = Point2D::<f32>::new(0.0, 0.0);
-        let q = Point2D::<f32>::new(0.0, 0.0);
-        let slope = match p.slope(&q) {
-            Ok(res) => res,
+        let p = Point2D::<f32>::new(1.0, 2.0);
+        let q = Point2D::<f32>::new(4.0, 3.0);
+        match p.slope(&q) {
+            Ok(res) => println!("{}", res),
             Err(e) => panic!("{}", e),
         };
-        println!("{}", slope);
-        // assert_eq!(p.slope(&q), 1.0);
     }
 }

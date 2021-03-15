@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 
 pub struct Point3D<T> {
     x: T,
@@ -24,6 +24,24 @@ impl<T> Point3D<T> {
             + (self.y - other.y) * (self.y - other.y)
             + (self.z - other.z) * (self.z - other.z)
     }
+    pub fn slope(&self, other: &Point3D<T>) -> (T, T, T)
+    where
+        T: Copy
+            + Add
+            + Mul
+            + Sub
+            + Add<Output = T>
+            + Sub<Output = T>
+            + Mul<Output = T>
+            + Div<Output = T>,
+    {
+        let mag = self.eucli_dist_sqr(&other);
+        (
+            (self.x - other.x) / mag,
+            (self.y - other.y) / mag,
+            (self.z - other.z) / mag,
+        )
+    }
 }
 
 #[cfg(test)]
@@ -39,5 +57,12 @@ mod tests {
         let p = Point3D::<f32>::new(1.0, 2.0, 3.0);
         let q = Point3D::<f32>::new(4.0, 5.0, 6.0);
         assert_eq!(p.eucli_dist_sqr(&q), 27.0);
+    }
+    #[test]
+    fn slope_test() {
+        let p = Point3D::<f32>::new(1.0, 2.0, 3.0);
+        let q = Point3D::<f32>::new(4.0, 5.0, 6.0);
+        let (yz, xz, xy) = p.slope(&q);
+        println!("{}, {}, {}", yz, xz, xy);
     }
 }
